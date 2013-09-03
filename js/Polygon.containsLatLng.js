@@ -1,44 +1,47 @@
 /**
  * @link https://code.google.com/p/google-maps-extensions/source/browse/google.maps.Polygon.getBounds.js
  */
-if (!google.maps.Polygon.prototype.containsLatLng) {
-  google.maps.Polygon.prototype.containsLatLng = function(latLng) {
-    // Exclude points outside of bounds as there is no way they are in the poly
 
-    var lat, lng;
+(function(gmaps) {
 
-    //arguments are a pair of lat, lng variables
-    var bounds = this.getBounds();
+    gmaps.Polygon.prototype.containsLatLng = function(latLng) {
+        // Exclude points outside of bounds as there is no way they are in the poly
 
-    if(bounds != null && !bounds.contains(latLng)) {
-      return false;
-    }
-    lat = latLng.lat();
-    lng = latLng.lng();
+        var lat, lng;
 
-    // Raycast point in polygon method
-    var inPoly = false;
+        //arguments are a pair of lat, lng variables
+        var bounds = this.getBounds();
 
-    var numPaths = this.getPaths().getLength();
-    for(var p = 0; p < numPaths; p++) {
-      var path = this.getPaths().getAt(p);
-      var numPoints = path.getLength();
-      var j = numPoints-1;
+        if(bounds != null && !bounds.contains(latLng)) {
+            return false;
+        }
+        lat = latLng.lat();
+        lng = latLng.lng();
 
-      for(var i=0; i < numPoints; i++) {
-        var vertex1 = path.getAt(i);
-        var vertex2 = path.getAt(j);
+        // Raycast point in polygon method
+        var inPoly = false;
 
-        if (vertex1.lng() < lng && vertex2.lng() >= lng || vertex2.lng() < lng && vertex1.lng() >= lng) {
-          if (vertex1.lat() + (lng - vertex1.lng()) / (vertex2.lng() - vertex1.lng()) * (vertex2.lat() - vertex1.lat()) < lat) {
-            inPoly = !inPoly;
-          }
+        var numPaths = this.getPaths().getLength();
+        for(var p = 0; p < numPaths; p++) {
+            var path = this.getPaths().getAt(p);
+            var numPoints = path.getLength();
+            var j = numPoints-1;
+
+            for(var i=0; i < numPoints; i++) {
+                var vertex1 = path.getAt(i);
+                var vertex2 = path.getAt(j);
+
+                if (vertex1.lng() < lng && vertex2.lng() >= lng || vertex2.lng() < lng && vertex1.lng() >= lng) {
+                    if (vertex1.lat() + (lng - vertex1.lng()) / (vertex2.lng() - vertex1.lng()) * (vertex2.lat() - vertex1.lat()) < lat) {
+                        inPoly = !inPoly;
+                    }
+                }
+
+                j = i;
+            }
         }
 
-        j = i;
-      }
+        return inPoly;
     }
 
-    return inPoly;
-  }
-}
+})(google.maps);

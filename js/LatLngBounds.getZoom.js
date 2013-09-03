@@ -1,9 +1,10 @@
 /**
  * @link http://stackoverflow.com/questions/6048975/google-maps-v3-how-to-calculate-the-zoom-level-for-a-given-bounds
  */
-if (!google.maps.LatLngBounds.prototype.getZoom) {
 
-    google.maps.LatLngBounds.prototype.getZoom = function(map) {
+(function(gmaps) {
+
+    gmaps.LatLngBounds.prototype.getZoom = function(map) {
         var WORLD_DIM = { height: 256, width: 256 };
         var ZOOM_MAX = 21;
 
@@ -31,4 +32,4 @@ if (!google.maps.LatLngBounds.prototype.getZoom) {
         return Math.min(latZoom, lngZoom, ZOOM_MAX);
     };
 
-}
+})(google.maps);
